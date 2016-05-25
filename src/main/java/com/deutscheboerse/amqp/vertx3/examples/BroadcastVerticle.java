@@ -32,8 +32,8 @@ public class BroadcastVerticle extends AbstractVerticle {
 
     @Override
     public void start(Future<Void> fut) {
-        jdbc = JDBCClient.createShared(vertx, new JsonObject().put("url", "jdbc:hsqldb:mem:db/code-examples").put("drive_class", "org.hsqldb.jdbcDriver"), "Code-Examples");
-        proton = ProtonClient.create(vertx);
+
+
 
         startDb(
                 (connection) -> initDb(
@@ -55,6 +55,9 @@ public class BroadcastVerticle extends AbstractVerticle {
     }
 
     private void startDb(Handler<AsyncResult<SQLConnection>> next, Future<Void> fut) {
+        LOG.info("Connecting to JDBC database on URL " + config().getValue("db.url") + " with driver class " + config().getValue("db.driver_class"));
+        jdbc = JDBCClient.createShared(vertx, new JsonObject().put("url", config().getValue("db.url")).put("driver_class", config().getValue("db.driver_class")), "Code-Examples");
+
         jdbc.getConnection(ar -> {
             if (ar.failed()) {
                 fut.fail(ar.cause());
@@ -96,9 +99,6 @@ public class BroadcastVerticle extends AbstractVerticle {
         Router router = Router.router(vertx);
 
         router.route("/api/v1*").handler(BodyHandler.create());
-        /*router.get("/api/v1/broadcast").handler(this::broadcast);
-        router.get("/api/v1/receive/:queueName").handler(this::receive);
-        router.post("/api/v1/requestResponse").handler(this::requestResponse);*/
         router.post("/api/v1/subscribe").handler(this::subscribe);
         router.get("/api/v1/messages").handler(this::messages);
         router.get("/api/v1/messages/:queueName").handler(this::messagesByQueue);
@@ -128,8 +128,11 @@ public class BroadcastVerticle extends AbstractVerticle {
     }
 
     private void startAmqp(Future<Void> fut) {
-        LOG.info("Opening connection to admin/admin@eclbgc01:20707");
-        proton.connect("eclbgc01.xeop.de", 20707, "admin", "admin", connectResult -> {
+        proton = ProtonClient.create(vertx);
+
+        LOG.info("Opening connection to " + config().getString("amqp.username") + "/" + config().getString("amqp.password") + "@" + config().getString("amqp.hostname", "localhost") + ":" + config().getInteger("amqp.port", 5671));
+
+        proton.connect(config().getString("amqp.hostname", "localhost"), config().getInteger("amqp.port", 5671), config().getString("amqp.username"), config().getString("amqp.password"), connectResult -> {
             if (connectResult.succeeded()) {
                 connectResult.result().setContainer("example-container/code-examples").openHandler(openResult -> {
                     if (openResult.succeeded()) {
@@ -269,105 +272,4 @@ public class BroadcastVerticle extends AbstractVerticle {
             }
         }).open();
     }
-
-    /*private void broadcast(RoutingContext routingContext) {
-        LOG.info("Received messages request");
-
-        jdbc.getConnection(ar -> {
-            SQLConnection connection = ar.result();
-            connection.query("SELECT * FROM Messages", result -> {
-                routingContext.response()
-                        .putHeader("content-type", "application/json; charset=utf-8")
-                        .end(Json.encodePrettily(result.result().getRows()));
-                connection.close();
-            });
-        });
-    }
-
-    private void receive(RoutingContext routingContext) {
-        LOG.info("Received receive request");
-
-        ProtonReceiver receiver = protonConnection.createReceiver(routingContext.request().getParam("queueName")).setAutoAccept(false).setPrefetch(0).open();
-        receiver.handler((delivery, msg) -> {
-            Section body = msg.getBody();
-            String bodyStr = "";
-
-            if (body instanceof AmqpValue) {
-                bodyStr = ((AmqpValue)body).getValue().toString();
-                LOG.info("Got message with AMQP Value " + ((AmqpValue) body).getValue().toString());
-            }
-            else if (body instanceof Data)
-            {
-                bodyStr = ((Data)body).getValue().toString();
-                LOG.info("Got message with Data Value " + ((Data) body).getValue().toString());
-            }
-            else
-            {
-                bodyStr = body.toString();
-                LOG.info("Got message without AMQP Value " + body.toString());
-            }
-
-            routingContext.response()
-                    .putHeader("content-type", "application/json; charset=utf-8")
-                    .end(Json.encodePrettily(bodyStr));
-
-            delivery.settle();
-
-            receiver.close();
-        });
-
-        receiver.flow(1);
-    }
-
-    private void requestResponse(RoutingContext routingContext) {
-        LOG.info("Received requestResponse request");
-
-        ProtonReceiver receiver = protonConnection.createReceiver("response.ABCFR_ABCFRALMMACC1").setAutoAccept(false).setPrefetch(0).open();
-        receiver.handler((delivery, msg) -> {
-            Section body = msg.getBody();
-            String bodyStr = "";
-
-            if (body instanceof AmqpValue) {
-                bodyStr = ((AmqpValue)body).getValue().toString();
-                LOG.info("Got message with AMQP Value " + ((AmqpValue) body).getValue().toString());
-            }
-            else if (body instanceof Data)
-            {
-                bodyStr = ((Data)body).getValue().toString();
-                LOG.info("Got message with Data Value " + ((Data) body).getValue().toString());
-            }
-            else
-            {
-                bodyStr = body.toString();
-                LOG.info("Got message without AMQP Value " + body.toString());
-            }
-
-            routingContext.response()
-                    .putHeader("content-type", "application/json; charset=utf-8")
-                    .end(Json.encodePrettily(bodyStr));
-
-            delivery.settle();
-
-            receiver.close();
-        });
-
-        protonConnection.createSender("request.ABCFR_ABCFRALMMACC1").openHandler(openResult -> {
-            if (openResult.succeeded()) {
-                ProtonSender sender = openResult.result();
-
-                Message message = Message.Factory.create();
-                message.setReplyTo("response/response.ABCFR_ABCFRALMMACC1");
-                message.setBody(new AmqpValue("Hello World"));
-                message.setCorrelationId(UUID.randomUUID().toString());
-
-                sender.send(message, delivery -> {
-                    LOG.info("Request message received by server: remote state=" + delivery.getRemoteState() + ", remotely settled=" + delivery.remotelySettled());
-                });
-
-                sender.close();
-            }
-        }).open();
-
-        receiver.flow(1);
-    }*/
 }

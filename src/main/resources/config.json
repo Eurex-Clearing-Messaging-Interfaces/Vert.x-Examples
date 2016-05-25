@@ -1,0 +1,9 @@
+{
+  "http.port":          8080,
+  "jdbc.url":           "jdbc:hsqldb:file:db/whiskies",
+  "jdbc.driver_class":  "org.hsqldb.jdbcDriver",
+  "amqp.hostname":      "eclbgc01.xeop.de",
+  "amqp.port":          20707,
+  "amqp.username":      "admin",
+  "amqp.password":      "admin"
+}
