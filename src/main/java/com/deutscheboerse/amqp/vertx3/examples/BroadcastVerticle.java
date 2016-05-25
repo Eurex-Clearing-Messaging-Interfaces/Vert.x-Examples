@@ -32,9 +32,6 @@ public class BroadcastVerticle extends AbstractVerticle {
 
     @Override
     public void start(Future<Void> fut) {
-
-
-
         startDb(
                 (connection) -> initDb(
                         connection,
@@ -55,8 +52,8 @@ public class BroadcastVerticle extends AbstractVerticle {
     }
 
     private void startDb(Handler<AsyncResult<SQLConnection>> next, Future<Void> fut) {
-        LOG.info("Connecting to JDBC database on URL " + config().getValue("db.url") + " with driver class " + config().getValue("db.driver_class"));
-        jdbc = JDBCClient.createShared(vertx, new JsonObject().put("url", config().getValue("db.url")).put("driver_class", config().getValue("db.driver_class")), "Code-Examples");
+        LOG.info("Connecting to JDBC database on URL " + config().getString("jdbc.url") + " with driver class " + config().getString("jdbc.driver_class"));
+        jdbc = JDBCClient.createShared(vertx, new JsonObject().put("url", config().getString("jdbc.url")).put("driver_class", config().getString("jdbc.driver_class")), "Code-Examples");
 
         jdbc.getConnection(ar -> {
             if (ar.failed()) {
