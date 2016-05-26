@@ -1,9 +1,9 @@
-package com.deutscheboerse.amqp.vertx3.examples;
+package com.deutscheboerse.amqp.vertx3.examples.model;
 
 /**
  * Created by schojak on 24.5.16.
  */
-public class Queue {
+public class QueueModel {
     private String name = null;
 
     public String getName() {

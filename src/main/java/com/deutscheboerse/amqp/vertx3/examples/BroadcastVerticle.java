@@ -1,5 +1,7 @@
 package com.deutscheboerse.amqp.vertx3.examples;
 
+import com.deutscheboerse.amqp.vertx3.examples.model.MessageModel;
+import com.deutscheboerse.amqp.vertx3.examples.model.QueueModel;
 import io.vertx.core.*;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.Json;
@@ -151,7 +153,7 @@ public class BroadcastVerticle extends AbstractVerticle {
 
     private void subscribe(RoutingContext routingContext) {
 
-        Queue q = Json.decodeValue(routingContext.getBodyAsString(), Queue.class);
+        QueueModel q = Json.decodeValue(routingContext.getBodyAsString(), QueueModel.class);
 
         LOG.info("Received subscribe request for queue " + q.getName());
 
@@ -184,7 +186,7 @@ public class BroadcastVerticle extends AbstractVerticle {
     }
 
     private void storeBroadcast(String sourceQueue, Message msg, Handler<AsyncResult<Void>> next) {
-        MyMessage myMsg = MyMessage.createFromProtonMessage(msg);
+        MessageModel myMsg = MessageModel.createFromProtonMessage(msg);
 
         String sql = "INSERT INTO Messages (source, messageId, correlationId, subject, body) VALUES ?, ?, ?, ?, ?";
 
@@ -246,7 +248,7 @@ public class BroadcastVerticle extends AbstractVerticle {
     }
 
     private void request(RoutingContext routingContext) {
-        MyMessage m = Json.decodeValue(routingContext.getBodyAsString(), MyMessage.class);
+        MessageModel m = Json.decodeValue(routingContext.getBodyAsString(), MessageModel.class);
 
         LOG.info("Received request request" + m.toString());
 

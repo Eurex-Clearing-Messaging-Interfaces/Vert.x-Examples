@@ -1,5 +1,6 @@
-package com.deutscheboerse.amqp.vertx3.examples;
+package com.deutscheboerse.amqp.vertx3.examples.model;
 
+import com.deutscheboerse.amqp.vertx3.examples.BroadcastVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.apache.qpid.proton.amqp.messaging.AmqpValue;
@@ -9,7 +10,7 @@ import org.apache.qpid.proton.amqp.messaging.Section;
 /**
  * Created by schojak on 24.5.16.
  */
-public class MyMessage {
+public class MessageModel {
     final static private Logger LOG = LoggerFactory.getLogger(BroadcastVerticle.class);
 
     private String messageId = null;
@@ -17,9 +18,9 @@ public class MyMessage {
     private String subject = null;
     private String body = null;
 
-    public static MyMessage createFromProtonMessage(org.apache.qpid.proton.message.Message msg)
+    public static MessageModel createFromProtonMessage(org.apache.qpid.proton.message.Message msg)
     {
-        MyMessage newMsg = new MyMessage();
+        MessageModel newMsg = new MessageModel();
         newMsg.setCorrelationId(msg.getCorrelationId() != null ? msg.getCorrelationId().toString() : "");
         newMsg.setMessageId(msg.getMessageId() != null ? msg.getMessageId().toString() : "");
         newMsg.setSubject(msg.getSubject() != null ? msg.getSubject() : "");
@@ -28,17 +29,17 @@ public class MyMessage {
 
         if (body instanceof AmqpValue) {
             newMsg.setBody(((AmqpValue)body).getValue().toString());
-            LOG.trace("MyMessage with AMQP Value " + ((AmqpValue) body).getValue().toString());
+            LOG.trace("MessageModel with AMQP Value " + ((AmqpValue) body).getValue().toString());
         }
         else if (body instanceof Data)
         {
             newMsg.setBody(((Data)body).getValue().toString());
-            LOG.trace("MyMessage with Data Value " + ((Data) body).getValue().toString());
+            LOG.trace("MessageModel with Data Value " + ((Data) body).getValue().toString());
         }
         else
         {
             newMsg.setBody(body.toString());
-            LOG.trace("MyMessage without AMQP Value " + body.toString());
+            LOG.trace("MessageModel without AMQP Value " + body.toString());
         }
 
         return newMsg;
