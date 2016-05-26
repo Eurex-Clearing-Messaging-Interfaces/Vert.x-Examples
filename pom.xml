@@ -8,16 +8,25 @@
     <artifactId>vertx3-examples</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+            <id>Sonatype OSS</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
-            <version>3.2.1</version>
+            <!--<version>3.2.1</version>-->
+            <version>3.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web</artifactId>
             <version>3.2.1</version>
+            <!--<version>3.3.0-SNAPSHOT</version>-->
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
@@ -27,12 +36,18 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-jdbc-client</artifactId>
-            <version>3.2.1</version>
+            <!--<version>3.2.1</version>-->
+            <version>3.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>2.3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-tcnative-boringssl-static</artifactId>
+            <version>1.1.33.Fork16</version>
         </dependency>
     </dependencies>
 

@@ -2,8 +2,8 @@
   "http.port":          8080,
   "jdbc.url":           "jdbc:hsqldb:mem:db/code-examples",
   "jdbc.driver_class":  "org.hsqldb.jdbcDriver",
-  "amqp.hostname":      "eclbgc01.xeop.de",
-  "amqp.port":          20707,
+  "amqp.hostname":      "172.16.83.135",
+  "amqp.port":          10707,
   "amqp.username":      "admin",
   "amqp.password":      "admin"
 }

@@ -9,15 +9,13 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.core.net.*;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.proton.ProtonClient;
-import io.vertx.proton.ProtonConnection;
-import io.vertx.proton.ProtonReceiver;
-import io.vertx.proton.ProtonSender;
+import io.vertx.proton.*;
 import org.apache.qpid.proton.amqp.messaging.AmqpValue;
 import org.apache.qpid.proton.amqp.messaging.Released;
 import org.apache.qpid.proton.message.Message;
@@ -99,10 +97,10 @@ public class BroadcastVerticle extends AbstractVerticle {
 
         router.route("/api/v1*").handler(BodyHandler.create());
         router.post("/api/v1/subscribe").handler(this::subscribe);
+        router.post("/api/v1/request").handler(this::request);
         router.get("/api/v1/messages").handler(this::messages);
         router.get("/api/v1/messages/:queueName").handler(this::messagesByQueue);
         router.get("/api/v1/messages/:queueName/:correlationId").handler(this::messagesByQueueWithCorrelationId);
-        router.post("/api/v1/request").handler(this::request);
 
         int port = config().getInteger("http.port", 8080);
         LOG.info("Starting web server on port " + port);
@@ -129,7 +127,36 @@ public class BroadcastVerticle extends AbstractVerticle {
     private void startAmqp(Future<Void> fut) {
         proton = ProtonClient.create(vertx);
 
+        System.setProperty("javax.net.debug", "ssl");
+
         LOG.info("Opening connection to " + config().getString("amqp.username") + "/" + config().getString("amqp.password") + "@" + config().getString("amqp.hostname", "localhost") + ":" + config().getInteger("amqp.port", 5671));
+
+        //ProtonClientOptions options = new ProtonClientOptions().setAllowedSaslMechanisms("EXTERNAL").setIdleTimeout(0).setSsl(true).setPfxKeyCertOptions(new PfxOptions().setPassword("123456").setPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.p12")).setTrustStoreOptions(new JksOptions().setPassword("123456").setPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/truststore"));
+        //ProtonClientOptions options = new ProtonClientOptions().setAllowedSaslMechanisms("EXTERNAL").setIdleTimeout(0).setSsl(true).setKeyStoreOptions(new JksOptions().setPassword("123456").setPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.keystore")).setTrustStoreOptions(new JksOptions().setPassword("123456").setPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/truststore"));
+        ProtonClientOptions options = new ProtonClientOptions().setAllowedSaslMechanisms("EXTERNAL").setIdleTimeout(0).setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setCertPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.crt").setKeyPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.pem")).setPemTrustOptions(new PemTrustOptions().addCertPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/eclbgc.crt"));
+
+        ((TCPSSLOptions)options).setSslEngine(SSLEngine.OPENSSL);
+
+        proton.connect(options, config().getString("amqp.hostname", "localhost"), config().getInteger("amqp.port", 5671), connectResult -> {
+            if (connectResult.succeeded()) {
+                connectResult.result().setContainer("example-container/code-examples").openHandler(openResult -> {
+                    if (openResult.succeeded()) {
+                        protonConnection = openResult.result();
+                        fut.complete();
+                    }
+                    else {
+                        LOG.error("AMQP Connection faield ", openResult.cause());
+                        fut.fail(openResult.cause());
+                    }
+                }).open();
+            }
+            else {
+                LOG.error("AMQP Connection failed ", connectResult.cause());
+                fut.fail(connectResult.cause());
+            }
+        });
+
+        /*LOG.info("Opening connection to " + config().getString("amqp.username") + "/" + config().getString("amqp.password") + "@" + config().getString("amqp.hostname", "localhost") + ":" + config().getInteger("amqp.port", 5671));
 
         proton.connect(config().getString("amqp.hostname", "localhost"), config().getInteger("amqp.port", 5671), config().getString("amqp.username"), config().getString("amqp.password"), connectResult -> {
             if (connectResult.succeeded()) {
@@ -148,11 +175,10 @@ public class BroadcastVerticle extends AbstractVerticle {
                 LOG.error("AMQP Connection failed ", connectResult.cause());
                 fut.fail(connectResult.cause());
             }
-        });
+        });*/
     }
 
     private void subscribe(RoutingContext routingContext) {
-
         QueueModel q = Json.decodeValue(routingContext.getBodyAsString(), QueueModel.class);
 
         LOG.info("Received subscribe request for queue " + q.getName());
