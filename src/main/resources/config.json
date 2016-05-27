@@ -1,0 +1,10 @@
+{
+  "http.port":          8080,
+  "jdbc.url":           "jdbc:hsqldb:mem:db/code-examples",
+  "jdbc.driver_class":  "org.hsqldb.jdbcDriver",
+  "amqp.hostname":      "ecag-fixml-dev1",
+  "amqp.port":          35671,
+  "amqp.serverCert":    "/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ecag-fixml-dev1.crt",
+  "amqp.clientCert":    "/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.crt",
+  "amqp.clientKey":     "/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.pem"
+}
