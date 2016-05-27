@@ -6,6 +6,14 @@ package com.deutscheboerse.amqp.vertx3.examples.model;
 public class QueueModel {
     private String name = null;
 
+    public QueueModel() {
+        return;
+    }
+
+    public QueueModel(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

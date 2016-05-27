@@ -175,13 +175,16 @@ public class CodeExampleVerticle extends AbstractVerticle {
         LOG.info("Received subscribe request for queue " + q.getName());
 
         ProtonReceiver protonReceiver = protonConnection.createReceiver(q.getName()).setPrefetch(1000).setAutoAccept(false).handler((delivery, msg) -> {
+            LOG.info("Received a message from queue " + q.getName());
             storeBroadcast(q.getName(), msg, (r) -> {
                         if (r.succeeded())
                         {
+                            LOG.info("Message has been stored - settling");
                             delivery.settle();
                         }
                         else
                         {
+                            LOG.warn("Failed to store the message - releasing");
                             delivery.disposition(new Released(), true);
                         }
                     }
@@ -190,7 +193,7 @@ public class CodeExampleVerticle extends AbstractVerticle {
             if (protonReceiverAsyncResult.succeeded())
             {
                 LOG.info("Subscribe to queue " + q.getName());
-                routingContext.response().setStatusCode(200)
+                routingContext.response().setStatusCode(201)
                         .end();
             }
             else
@@ -246,7 +249,7 @@ public class CodeExampleVerticle extends AbstractVerticle {
     HTTP request to show messages only for a single queue
      */
     private void messagesByQueue(RoutingContext routingContext) {
-        LOG.info("Received broadcast request");
+        LOG.info("Received messages request by queue " + routingContext.request().getParam("queueName"));
 
         jdbc.getConnection(ar -> {
             SQLConnection connection = ar.result();
@@ -263,7 +266,7 @@ public class CodeExampleVerticle extends AbstractVerticle {
     HTTP request to show messages from single queue which match specific correlation ID
      */
     private void messagesByQueueWithCorrelationId(RoutingContext routingContext) {
-        LOG.info("Received broadcast request");
+        LOG.info("Received messages request by queue " + routingContext.request().getParam("queueName") + " and correlation ID " + routingContext.request().getParam("correlationId"));
 
         jdbc.getConnection(ar -> {
             SQLConnection connection = ar.result();
@@ -295,7 +298,7 @@ public class CodeExampleVerticle extends AbstractVerticle {
 
                 sender.send(message, delivery -> {
                     LOG.info("Request message received by server: remote state=" + delivery.getRemoteState() + ", remotely settled=" + delivery.remotelySettled());
-                    routingContext.response().setStatusCode(200)
+                    routingContext.response().setStatusCode(201)
                             .end();
                 });
 

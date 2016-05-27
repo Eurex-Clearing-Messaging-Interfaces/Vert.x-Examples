@@ -45,6 +45,17 @@ public class MessageModel {
         return newMsg;
     }
 
+    public MessageModel() {
+        return;
+    }
+
+    public MessageModel(String messageId, String correlationId, String subject, String body) {
+        this.messageId = messageId;
+        this.correlationId = correlationId;
+        this.subject = subject;
+        this.body = body;
+    }
+
     public String getCorrelationId() {
         return correlationId;
     }
