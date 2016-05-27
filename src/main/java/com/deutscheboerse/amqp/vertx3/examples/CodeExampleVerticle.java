@@ -104,12 +104,12 @@ public class CodeExampleVerticle extends AbstractVerticle {
     private void startWebApp(Handler<AsyncResult<HttpServer>> next, Future<Void> fut) {
         Router router = Router.router(vertx);
 
-        router.route("/api/v1*").handler(BodyHandler.create());
-        router.post("/api/v1/subscribe").handler(this::subscribe);
-        router.post("/api/v1/request").handler(this::request);
-        router.get("/api/v1/messages").handler(this::messages);
-        router.get("/api/v1/messages/:queueName").handler(this::messagesByQueue);
-        router.get("/api/v1/messages/:queueName/:correlationId").handler(this::messagesByQueueWithCorrelationId);
+        router.route("/api/*").handler(BodyHandler.create());
+        router.post("/api/subscribe").handler(this::subscribe);
+        router.post("/api/request").handler(this::request);
+        router.get("/api/messages").handler(this::messages);
+        router.get("/api/messages/:queueName").handler(this::messagesByQueue);
+        router.get("/api/messages/:queueName/:correlationId").handler(this::messagesByQueueWithCorrelationId);
 
         int port = config().getInteger("http.port", 8080);
         LOG.info("Starting web server on port " + port);
