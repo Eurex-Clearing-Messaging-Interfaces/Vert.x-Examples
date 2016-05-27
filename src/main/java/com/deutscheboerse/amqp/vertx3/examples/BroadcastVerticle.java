@@ -127,14 +127,8 @@ public class BroadcastVerticle extends AbstractVerticle {
     private void startAmqp(Future<Void> fut) {
         proton = ProtonClient.create(vertx);
 
-        System.setProperty("javax.net.debug", "ssl");
-
-        LOG.info("Opening connection to " + config().getString("amqp.username") + "/" + config().getString("amqp.password") + "@" + config().getString("amqp.hostname", "localhost") + ":" + config().getInteger("amqp.port", 5671));
-
-        //ProtonClientOptions options = new ProtonClientOptions().setAllowedSaslMechanisms("EXTERNAL").setIdleTimeout(0).setSsl(true).setPfxKeyCertOptions(new PfxOptions().setPassword("123456").setPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.p12")).setTrustStoreOptions(new JksOptions().setPassword("123456").setPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/truststore"));
-        //ProtonClientOptions options = new ProtonClientOptions().setAllowedSaslMechanisms("EXTERNAL").setIdleTimeout(0).setSsl(true).setKeyStoreOptions(new JksOptions().setPassword("123456").setPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.keystore")).setTrustStoreOptions(new JksOptions().setPassword("123456").setPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/truststore"));
-        ProtonClientOptions options = new ProtonClientOptions().setAllowedSaslMechanisms("EXTERNAL").setIdleTimeout(0).setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setCertPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.crt").setKeyPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.pem")).setPemTrustOptions(new PemTrustOptions().addCertPath("/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/eclbgc.crt"));
-
+        LOG.info("Opening connection to " + config().getString("amqp.hostname", "localhost") + ":" + config().getInteger("amqp.port", 5671) + " with server certificate " + config().getString("amqp.serverCert") + ", client certificate " + config().getString("amqp.clientCert") + " and client key " +  config().getString("amqp.clientKey"));
+        ProtonClientOptions options = new ProtonClientOptions().setAllowedSaslMechanisms("EXTERNAL").setIdleTimeout(0).setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setCertPath(config().getString("amqp.clientCert")).setKeyPath(config().getString("amqp.clientKey"))).setPemTrustOptions(new PemTrustOptions().addCertPath(config().getString("amqp.serverCert")));
         ((TCPSSLOptions)options).setSslEngine(SSLEngine.OPENSSL);
 
         proton.connect(options, config().getString("amqp.hostname", "localhost"), config().getInteger("amqp.port", 5671), connectResult -> {
@@ -155,27 +149,6 @@ public class BroadcastVerticle extends AbstractVerticle {
                 fut.fail(connectResult.cause());
             }
         });
-
-        /*LOG.info("Opening connection to " + config().getString("amqp.username") + "/" + config().getString("amqp.password") + "@" + config().getString("amqp.hostname", "localhost") + ":" + config().getInteger("amqp.port", 5671));
-
-        proton.connect(config().getString("amqp.hostname", "localhost"), config().getInteger("amqp.port", 5671), config().getString("amqp.username"), config().getString("amqp.password"), connectResult -> {
-            if (connectResult.succeeded()) {
-                connectResult.result().setContainer("example-container/code-examples").openHandler(openResult -> {
-                    if (openResult.succeeded()) {
-                        protonConnection = openResult.result();
-                        fut.complete();
-                    }
-                    else {
-                        LOG.error("AMQP Connection faield ", openResult.cause());
-                        fut.fail(openResult.cause());
-                    }
-                }).open();
-            }
-            else {
-                LOG.error("AMQP Connection failed ", connectResult.cause());
-                fut.fail(connectResult.cause());
-            }
-        });*/
     }
 
     private void subscribe(RoutingContext routingContext) {

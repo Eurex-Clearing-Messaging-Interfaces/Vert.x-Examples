@@ -4,6 +4,7 @@
   "jdbc.driver_class":  "org.hsqldb.jdbcDriver",
   "amqp.hostname":      "172.16.83.135",
   "amqp.port":          10707,
-  "amqp.username":      "admin",
-  "amqp.password":      "admin"
+  "amqp.serverCert":    "/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/eclbgc.crt",
+  "amqp.clientCert":    "/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.crt",
+  "amqp.clientKey":     "/home/schojak/amqp/code-examples/Vert.x-Examples/src/main/resources/ABCFR_ABCFRALMMACC1.pem"
 }
