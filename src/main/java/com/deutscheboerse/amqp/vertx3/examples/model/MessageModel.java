@@ -8,7 +8,7 @@ import org.apache.qpid.proton.amqp.messaging.Data;
 import org.apache.qpid.proton.amqp.messaging.Section;
 
 /**
- * Created by schojak on 24.5.16.
+ * Class used to map AMQP messages between AMQP broker, database and JSON
  */
 public class MessageModel {
     final static private Logger LOG = LoggerFactory.getLogger(BroadcastVerticle.class);

@@ -51,6 +51,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         protonConnection.close();
     }
 
+    /*
+    Connect to the DB based on the configuration
+     */
     private void startDb(Handler<AsyncResult<SQLConnection>> next, Future<Void> fut) {
         LOG.info("Connecting to JDBC database on URL " + config().getString("jdbc.url") + " with driver class " + config().getString("jdbc.driver_class"));
         jdbc = JDBCClient.createShared(vertx, new JsonObject().put("url", config().getString("jdbc.url")).put("driver_class", config().getString("jdbc.driver_class")), "Code-Examples");
@@ -64,6 +67,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         });
     }
 
+    /*
+    Initialize the database - create the table for messages using SQL
+     */
     private void initDb(AsyncResult<SQLConnection> result, Handler<AsyncResult<Void>> next, Future<Void> fut) {
         if (result.failed()) {
             fut.fail(result.cause());
@@ -92,6 +98,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         }
     }
 
+    /*
+    Start the Web server and configure the router
+     */
     private void startWebApp(Handler<AsyncResult<HttpServer>> next, Future<Void> fut) {
         Router router = Router.router(vertx);
 
@@ -114,6 +123,9 @@ public class BroadcastVerticle extends AbstractVerticle {
                 );
     }
 
+    /*
+    Check that the webserver is started
+     */
     private void completeWebServerStartup(AsyncResult<HttpServer> http, Handler<AsyncResult<Void>> next, Future<Void> fut) {
         if (http.succeeded()) {
             LOG.info("Webserver successfully started");
@@ -124,6 +136,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         }
     }
 
+    /*
+    Open AMQP connection to the broker using OpenSSL
+     */
     private void startAmqp(Future<Void> fut) {
         proton = ProtonClient.create(vertx);
 
@@ -151,6 +166,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         });
     }
 
+    /*
+    HTTP request for subscribing to a queue - basically opens an AMQP receiver to given queue
+     */
     private void subscribe(RoutingContext routingContext) {
         QueueModel q = Json.decodeValue(routingContext.getBodyAsString(), QueueModel.class);
 
@@ -184,6 +202,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         }).open();
     }
 
+    /*
+    Support method for storeing received messages in the SQL database
+     */
     private void storeBroadcast(String sourceQueue, Message msg, Handler<AsyncResult<Void>> next) {
         MessageModel myMsg = MessageModel.createFromProtonMessage(msg);
 
@@ -204,6 +225,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         });
     }
 
+    /*
+    HTTP request to show all messages which we received
+     */
     private void messages(RoutingContext routingContext) {
         LOG.info("Received messages request");
 
@@ -218,6 +242,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         });
     }
 
+    /*
+    HTTP request to show messages only for a single queue
+     */
     private void messagesByQueue(RoutingContext routingContext) {
         LOG.info("Received broadcast request");
 
@@ -232,6 +259,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         });
     }
 
+    /*
+    HTTP request to show messages from single queue which match specific correlation ID
+     */
     private void messagesByQueueWithCorrelationId(RoutingContext routingContext) {
         LOG.info("Received broadcast request");
 
@@ -246,6 +276,9 @@ public class BroadcastVerticle extends AbstractVerticle {
         });
     }
 
+    /*
+    HTTP request to send AMQP request messages to the broker. It opens the sender, sends a message and closes the sender.
+     */
     private void request(RoutingContext routingContext) {
         MessageModel m = Json.decodeValue(routingContext.getBodyAsString(), MessageModel.class);
 
