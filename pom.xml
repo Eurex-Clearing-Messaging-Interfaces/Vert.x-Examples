@@ -49,6 +49,18 @@
             <artifactId>netty-tcnative-boringssl-static</artifactId>
             <version>1.1.33.Fork16</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-unit</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -77,7 +89,7 @@
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
                                         <Main-Class>io.vertx.core.Starter</Main-Class>
-                                        <Main-Verticle>com.deutscheboerse.amqp.vertx3.examples.BroadcastVerticle</Main-Verticle>
+                                        <Main-Verticle>com.deutscheboerse.amqp.vertx3.examples.CodeExampleVerticle</Main-Verticle>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>

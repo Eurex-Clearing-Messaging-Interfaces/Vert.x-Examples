@@ -1,6 +1,6 @@
 package com.deutscheboerse.amqp.vertx3.examples.model;
 
-import com.deutscheboerse.amqp.vertx3.examples.BroadcastVerticle;
+import com.deutscheboerse.amqp.vertx3.examples.CodeExampleVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.apache.qpid.proton.amqp.messaging.AmqpValue;
@@ -11,7 +11,7 @@ import org.apache.qpid.proton.amqp.messaging.Section;
  * Class used to map AMQP messages between AMQP broker, database and JSON
  */
 public class MessageModel {
-    final static private Logger LOG = LoggerFactory.getLogger(BroadcastVerticle.class);
+    final static private Logger LOG = LoggerFactory.getLogger(CodeExampleVerticle.class);
 
     private String messageId = null;
     private String correlationId = null;

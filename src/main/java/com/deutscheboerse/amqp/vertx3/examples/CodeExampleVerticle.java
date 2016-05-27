@@ -23,8 +23,8 @@ import org.apache.qpid.proton.message.Message;
 /**
  * Created by schojak on 23.5.16.
  */
-public class BroadcastVerticle extends AbstractVerticle {
-    final static private Logger LOG = LoggerFactory.getLogger(BroadcastVerticle.class);
+public class CodeExampleVerticle extends AbstractVerticle {
+    final static private Logger LOG = LoggerFactory.getLogger(CodeExampleVerticle.class);
 
     private JDBCClient jdbc;
     private ProtonClient proton;
