@@ -154,7 +154,7 @@ public class CodeExampleVerticle extends AbstractVerticle {
                         fut.complete();
                     }
                     else {
-                        LOG.error("AMQP Connection faield ", openResult.cause());
+                        LOG.error("AMQP Connection failed ", openResult.cause());
                         fut.fail(openResult.cause());
                     }
                 }).open();
@@ -192,7 +192,7 @@ public class CodeExampleVerticle extends AbstractVerticle {
         }).openHandler(protonReceiverAsyncResult -> {
             if (protonReceiverAsyncResult.succeeded())
             {
-                LOG.info("Subscribe to queue " + q.getName());
+                LOG.info("Subscribed to queue " + q.getName());
                 routingContext.response().setStatusCode(201)
                         .end();
             }
