@@ -285,7 +285,7 @@ public class CodeExampleVerticle extends AbstractVerticle {
     private void request(RoutingContext routingContext) {
         MessageModel m = Json.decodeValue(routingContext.getBodyAsString(), MessageModel.class);
 
-        LOG.info("Received request request" + m.toString());
+        LOG.info("Received request request " + m.toString());
 
         protonConnection.createSender("request.ABCFR_ABCFRALMMACC1").openHandler(openResult -> {
             if (openResult.succeeded()) {
