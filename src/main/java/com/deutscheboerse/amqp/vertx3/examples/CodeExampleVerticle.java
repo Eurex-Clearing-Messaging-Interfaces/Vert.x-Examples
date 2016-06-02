@@ -2,6 +2,7 @@ package com.deutscheboerse.amqp.vertx3.examples;
 
 import com.deutscheboerse.amqp.vertx3.examples.model.MessageModel;
 import com.deutscheboerse.amqp.vertx3.examples.model.QueueModel;
+import cz.scholz.aliaskeymanager.AliasProvider;
 import io.vertx.core.*;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.Json;
@@ -142,9 +143,10 @@ public class CodeExampleVerticle extends AbstractVerticle {
     private void startAmqp(Future<Void> fut) {
         proton = ProtonClient.create(vertx);
 
+        AliasProvider.setAsDefault();
+
         LOG.info("Opening connection to " + config().getString("amqp.hostname", "localhost") + ":" + config().getInteger("amqp.port", 5671) + " with server certificate " + config().getString("amqp.serverCert") + ", client certificate " + config().getString("amqp.clientCert") + " and client key " +  config().getString("amqp.clientKey"));
         ProtonClientOptions options = new ProtonClientOptions().setAllowedSaslMechanisms("EXTERNAL").setIdleTimeout(0).setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setCertPath(config().getString("amqp.clientCert")).setKeyPath(config().getString("amqp.clientKey"))).setPemTrustOptions(new PemTrustOptions().addCertPath(config().getString("amqp.serverCert")));
-        ((TCPSSLOptions)options).setSslEngine(SSLEngine.OPENSSL);
 
         proton.connect(options, config().getString("amqp.hostname", "localhost"), config().getInteger("amqp.port", 5671), connectResult -> {
             if (connectResult.succeeded()) {
@@ -206,7 +208,7 @@ public class CodeExampleVerticle extends AbstractVerticle {
     }
 
     /*
-    Support method for storeing received messages in the SQL database
+    Support method for storing received messages in the SQL database
      */
     private void storeBroadcast(String sourceQueue, Message msg, Handler<AsyncResult<Void>> next) {
         MessageModel myMsg = MessageModel.createFromProtonMessage(msg);
