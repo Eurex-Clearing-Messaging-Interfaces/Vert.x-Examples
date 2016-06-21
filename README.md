@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples.svg?branch=master)](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples)
 
+[![CircleCI](https://circleci.com/gh/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples.svg?style=svg)](https://circleci.com/gh/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples)
+
 # Vert.x-Examples
 
 These examples show how to connect to Eurex Clearing Messaging Interfaces using the Vert.x 3 toolkit. More information about Vert.x can be found on its [website](http://vertx.io/). The examples are designed as a simple REST based application. They use the vertx-proton extension to communicate with the AMQP broker using AMQP 1.0. More info about vertx-proton can be found on its [GitHub project](https://github.com/vert-x3/vertx-proton). The examples also uses HSQL database over JDBC interface to store the messages.
