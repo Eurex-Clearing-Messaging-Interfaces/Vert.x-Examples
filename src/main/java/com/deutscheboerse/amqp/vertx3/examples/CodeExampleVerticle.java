@@ -144,7 +144,7 @@ public class CodeExampleVerticle extends AbstractVerticle {
 
         LOG.info("Opening connection to " + config().getString("amqp.hostname", "localhost") + ":" + config().getInteger("amqp.port", 5671) + " with server certificate " + config().getString("amqp.serverCert") + ", client certificate " + config().getString("amqp.clientCert") + " and client key " +  config().getString("amqp.clientKey"));
         ProtonClientOptions options = new ProtonClientOptions().setAllowedSaslMechanisms("EXTERNAL").setIdleTimeout(0).setSsl(true).setPemKeyCertOptions(new PemKeyCertOptions().setCertPath(config().getString("amqp.clientCert")).setKeyPath(config().getString("amqp.clientKey"))).setPemTrustOptions(new PemTrustOptions().addCertPath(config().getString("amqp.serverCert")));
-        ((TCPSSLOptions)options).setSslEngine(SSLEngine.OPENSSL);
+        ((TCPSSLOptions)options).setSslEngineOptions(new OpenSSLEngineOptions());
 
         proton.connect(options, config().getString("amqp.hostname", "localhost"), config().getInteger("amqp.port", 5671), connectResult -> {
             if (connectResult.succeeded()) {
