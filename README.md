@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples.svg?branch=master)](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples)
-
-[![CircleCI](https://circleci.com/gh/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples.svg?style=svg)](https://circleci.com/gh/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples)
+[![Build Status](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples.svg?branch=master)](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples) [![CircleCI](https://circleci.com/gh/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples.svg?style=svg)](https://circleci.com/gh/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples)
 
 # Vert.x-Examples
 
