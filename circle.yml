@@ -10,7 +10,7 @@ test:
   pre:
     - docker run -d -p 35672:5672 -p 35671:5671 ecmi/fixml:sim
   override:
-    - mvn test
+    - mvn -DrepoToken=${COVERALLS_TOKEN} test coveralls:report
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
