@@ -63,7 +63,7 @@ In order to connect to the Eurex brokers using SSL Client Authentication, the Op
 
 ## Integration tests
 
-The project is using Travis-CI to run its own integration tests. The tests are executed using Docker images which contain the AMQP broker with configuration corresponding to Eurex Clearing FIXML Interface as well as the Dispatch router. The details of the Travis-CI integration can be found in the .travis.yml file.
+The project is using Travis-CI and Circle CI to run its own integration tests. The tests are executed using Docker images which contain the AMQP broker with configuration corresponding to Eurex Clearing FIXML Interface as well as the Dispatch router. The details of the Travis-CI and Circle CI integration can be found in the .travis.yml and circle.yml files.
 
 ## Documentation
 
