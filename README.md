@@ -59,7 +59,7 @@ curl -X GET http://localhost:8080/api/messages/response.ABCFR_ABCFRALMMACC1/myCo
 
 ## SSL
 
-In order to connect to the Eurex brokers using SSL Client Authentication, the OpenSSL library has to be used by the Vert.x toolkit. With the Java SSL implementation, the SSL authentication does not work at this moment.
+In order to connect to the Eurex brokers using SSL Client Authentication based on self-signed certificates, the examples use the [AliasKeyManagaer library](http://aliaskeymanager.scholz.cz/).
 
 ## Integration tests
 
