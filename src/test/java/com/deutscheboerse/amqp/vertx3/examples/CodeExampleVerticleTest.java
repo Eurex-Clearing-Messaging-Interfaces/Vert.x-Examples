@@ -62,30 +62,25 @@ public class CodeExampleVerticleTest {
     public void checkRequestResponse(TestContext context) {
         // Start a parallel request responder
         ExecutorService executor = Executors.newFixedThreadPool(1);
-        Future<Boolean> future = executor.submit(new Callable<Boolean>()
-        {
-            @Override
-            public Boolean call()
+        Future<Boolean> future = executor.submit(() -> {
+            boolean success = true;
+            try (AutoCloseableConnection connection = CodeExampleVerticleTest.this.brokerUtils.getAdminConnection(getConfig().getString("amqp.hostname"), Integer.toString(getConfig().getInteger("amqp.tcpPort"))))
             {
-                boolean success = true;
-                try (AutoCloseableConnection connection = CodeExampleVerticleTest.this.brokerUtils.getAdminConnection(getConfig().getString("amqp.hostname"), Integer.toString(getConfig().getInteger("amqp.tcpPort"))))
-                {
-                    connection.start();
-                    Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-                    MessageConsumer requestConsumer = session.createConsumer(CodeExampleVerticleTest.this.brokerUtils.getQueue(REQUEST_QUEUE));
-                    Message requestMessage = requestConsumer.receive(10000);
-                    String receivedMessageText = ((TextMessage) requestMessage).getText();
-                    Message responseMessage = session.createTextMessage("Re: " + receivedMessageText);
-                    responseMessage.setJMSCorrelationID(requestMessage.getJMSCorrelationID());
-                    MessageProducer responseProducer = session.createProducer(CodeExampleVerticleTest.this.brokerUtils.getQueue(RESPONSE_QUEUE));
-                    responseProducer.send(responseMessage);
-                }
-                catch (JMSException | NamingException ex)
-                {
-                    success = false;
-                }
-                return success;
+                connection.start();
+                Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+                MessageConsumer requestConsumer = session.createConsumer(CodeExampleVerticleTest.this.brokerUtils.getQueue(REQUEST_QUEUE));
+                Message requestMessage = requestConsumer.receive(10000);
+                String receivedMessageText = ((TextMessage) requestMessage).getText();
+                Message responseMessage = session.createTextMessage("Re: " + receivedMessageText);
+                responseMessage.setJMSCorrelationID(requestMessage.getJMSCorrelationID());
+                MessageProducer responseProducer = session.createProducer(CodeExampleVerticleTest.this.brokerUtils.getQueue(RESPONSE_QUEUE));
+                responseProducer.send(responseMessage);
             }
+            catch (JMSException | NamingException ex)
+            {
+                success = false;
+            }
+            return success;
         });
 
         // Do the actual test

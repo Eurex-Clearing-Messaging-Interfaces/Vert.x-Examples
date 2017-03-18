@@ -1,10 +1,9 @@
-[![Build Status](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples.svg?branch=master)](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples)
+[![Build Status](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples.svg?branch=master)](https://travis-ci.org/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples) [![CircleCI](https://circleci.com/gh/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples.svg?style=shield)](https://circleci.com/gh/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples)
+[![Coverage Status](https://coveralls.io/repos/github/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples/badge.svg?branch=master)](https://coveralls.io/github/Eurex-Clearing-Messaging-Interfaces/Vert.x-Examples?branch=master)
 
 # Vert.x-Examples
 
 These examples show how to connect to Eurex Clearing Messaging Interfaces using the Vert.x 3 toolkit. More information about Vert.x can be found on its [website](http://vertx.io/). The examples are designed as a simple REST based application. They use the vertx-proton extension to communicate with the AMQP broker using AMQP 1.0. More info about vertx-proton can be found on its [GitHub project](https://github.com/vert-x3/vertx-proton). The examples also uses HSQL database over JDBC interface to store the messages.
-
-_**Note: The examples are currently based on the latest development version of Vert.x (3.3.0-SANPSHOT). This is because the OpenSSL support which will be added only in 3.3.0 release and is not available in the latest stable release (3.2.1).**_
 
 ## Configuration
 
@@ -17,7 +16,7 @@ Example configuration file can be found in `./src/main/resources/config.json`.
 
 ## Application start
 
-The application can be build using `mvn package` command and started as regular Java application:
+The application can be build using `mvn package` command and started as a regular Java application:
 `https://github.com/vert-x3/vertx-proton`
 
 After the start, the application will
@@ -51,7 +50,7 @@ curl -X POST http://localhost:8080/api/request -d "{\"correlationId\":\"myCorrId
 
 ### Reading Messages
 
-Messages which were received by the application are stored in the database. The can be obtained using HTTP GET request. Reqeust sent to `/api/messages` will return JSON formated list of all messages. Reqeust sent to `/api/messages/<queueNeme>` will return only messages recived from given queue. And reqeust sent to `/api/messages/<queueNeme>/<correlationID>` will return only messages recived from given queue matching the specific correlation ID.
+Messages which were received by the application are stored in the database. They can be obtained using HTTP GET request. Reqeust sent to `/api/messages` will return JSON formated list of all messages. Request sent to `/api/messages/<queueNeme>` will return only messages received from the given queue. And request sent to `/api/messages/<queueNeme>/<correlationID>` will return only messages received from the given queue matching the specific correlation ID.
 ```
 curl -X GET http://localhost:8080/api/messages
 curl -X GET http://localhost:8080/api/messages/response.ABCFR_ABCFRALMMACC1
@@ -60,11 +59,11 @@ curl -X GET http://localhost:8080/api/messages/response.ABCFR_ABCFRALMMACC1/myCo
 
 ## SSL
 
-In order to connect to the Eurex brokers using SSL Client Authentication, the OpenSSL library has to be used by the Vert.x toolkit. The Proton library would not pass the authentication when using JDK SSL implementation.
+In order to connect to the Eurex brokers using SSL Client Authentication, the OpenSSL library has to be used by the Vert.x toolkit. With the Java SSL implementation, the SSL authentication does not work at this moment.
 
 ## Integration tests
 
-The project is using Travis-CI to run its own integration tests. The tests are executed using Docker images which contain the AMQP broker with configuration corresponding to Eurex Clearing FIXML Interface as well as the Dispatch router. The details of the Travis-CI integration can be found in the .travis.yml file.
+The project is using Travis-CI and Circle CI to run its own integration tests. The tests are executed using Docker images which contain the AMQP broker with configuration corresponding to Eurex Clearing FIXML Interface as well as the Dispatch router. The details of the Travis-CI and Circle CI integration can be found in the .travis.yml and circle.yml files.
 
 ## Documentation
 
