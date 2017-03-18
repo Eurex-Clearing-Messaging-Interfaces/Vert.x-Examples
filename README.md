@@ -59,7 +59,7 @@ curl -X GET http://localhost:8080/api/messages/response.ABCFR_ABCFRALMMACC1/myCo
 
 ## SSL
 
-In order to connect to the Eurex brokers using SSL Client Authentication based on self-signed certificates, the examples use the [AliasKeyManagaer library](http://aliaskeymanager.scholz.cz/).
+In order to connect to the Eurex brokers using SSL Client Authentication based on self-signed certificates, the examples use the [AliasKeyManager library](http://aliaskeymanager.scholz.cz/).
 
 ## Integration tests
 
